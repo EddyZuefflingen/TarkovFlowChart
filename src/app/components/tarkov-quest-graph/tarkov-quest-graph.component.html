@@ -1,0 +1,65 @@
+<div layout="row">
+	<div fxFlex>
+		<button mat-button mat-raised-button color="primary" (click)="traderClicked('All')">All</button>
+		<div fxFlex="1"></div>
+		<button mat-button mat-raised-button color="primary" (click)="traderClicked('Prapor')">Prapor</button>
+		<div fxFlex="1"></div>
+		<button mat-button mat-raised-button color="primary" (click)="traderClicked('Therapist')">Therapist</button>
+		<div fxFlex="1"></div>
+		<button mat-button mat-raised-button color="primary" (click)="traderClicked('Skier')">Skier</button>
+		<div fxFlex="1"></div>
+		<button mat-button mat-raised-button color="primary" (click)="traderClicked('Peacekeeper')">Peacekeeper</button>
+		<div fxFlex="1"></div>
+		<button mat-button mat-raised-button color="primary" (click)="traderClicked('Mechanic')">Mechanic</button>
+		<div fxFlex="1"></div>
+		<button mat-button mat-raised-button color="primary" (click)="traderClicked('Ragman')">Ragman</button>
+		<div fxFlex="1"></div>
+		<button mat-button mat-raised-button color="primary" (click)="traderClicked('Jaeger')">Jaeger</button>
+		<div fxFlex="1"></div>
+		<button mat-button mat-raised-button color="primary" (click)="traderClicked('Fence')">Fence</button>
+		<div fxFlex="1"></div>
+		<button mat-button mat-raised-button color="primary" (click)="traderClicked('Lightkeeper')">Lightkeeper</button>
+	</div>
+
+	<div fxFlex fxLayoutAlign="end">
+		<div *ngFor="let player of players">
+			<button mat-button mat-raised-button color="warn" (click)="userClicked(player)">{{ player.name }}</button>
+		</div>
+	</div>
+</div>
+
+<div layout="row">
+	<mat-checkbox fxFlex="9" [(ngModel)]="filter.kappaRequired" (change)="generateGraph()">Kappa</mat-checkbox>
+	<mat-checkbox fxFlex="9" [(ngModel)]="filter.lightkeeperRequired" (change)="generateGraph()">Lightkeeper</mat-checkbox>
+</div>
+
+<div layout="row">
+	<label style="display: block; text-align: center; font-size: x-large">
+		{{ finishedTasks }}/{{ allTasks }} = {{ allTasks - finishedTasks }} ({{ finishedTraderTasks }}/{{ allTraderTasks }} = {{ allTraderTasks - finishedTraderTasks }})
+	</label>
+</div>
+
+<div style="height: 100%; width: 100%">
+	<ngx-graph class="chart-container" [showMiniMap]="true" [links]="questEdges" [nodes]="questNodes" [draggingEnabled]="false">
+		<ng-template #nodeTemplate let-node>
+			<svg:g class="node" [matTooltip]="node.data.objectiveString" matTooltipClass="costumTooltip" (click)="goToLink(node.data.wikiLink)">
+				<svg:rect
+					[attr.width]="node.dimension.width"
+					[attr.height]="node.dimension.height"
+					[attr.fill]="node.data.isCompleted ? '#34eb3a' : '#eb3455'"
+					[ngStyle]="checkIfOtherPlayersCompletedTask(node.data) ? {stroke: 'blue', 'stroke-width': '10'} : {}" />
+
+				<svg:foreignObject width="45" height="45" *ngIf="playerProgress != undefined && playerProgress.playerLevel < node.data.minPlayerLevel">
+					<fa-icon class="fa-2xl" [icon]="faLock"></fa-icon>
+				</svg:foreignObject>
+
+				<svg:text alignment-baseline="central" [attr.x]="10" [attr.y]="node.dimension.height / 2">
+					<fa-icon [icon]="faLock"></fa-icon>
+					{{ '[' + node.data.minPlayerLevel + '] ' }}
+					{{ node.label }}
+				</svg:text>
+			</svg:g>
+		</ng-template>
+	</ngx-graph>
+</div>
+
